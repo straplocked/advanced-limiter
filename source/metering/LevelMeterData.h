@@ -58,7 +58,20 @@ public:
 
     TripleBuffer<LimiterMeterFrame>& getBuffer() { return meterBuffer; }
 
+    // Cached latest frame for multi-consumer access (avoids TripleBuffer contention)
+    const LimiterMeterFrame& getLatestFrame() const { return latestFrame; }
+    bool swapAndCache()
+    {
+        if (meterBuffer.swapRead())
+        {
+            latestFrame = *meterBuffer.getReadPointer();
+            return true;
+        }
+        return false;
+    }
+
 private:
+    LimiterMeterFrame latestFrame;
     void publishFrame();
     float computePeakDB (const float* data, int numSamples) const;
 

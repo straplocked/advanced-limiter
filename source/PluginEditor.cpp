@@ -12,9 +12,11 @@
 #include "PluginEditor.h"
 #include "utils/Constants.h"
 #include "ui/LookAndFeel/ColourPalette.h"
+#include "parameters/ParameterIDs.h"
 
 AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
     : AudioProcessorEditor (&p),
+      processorRef (p),
       headerToolbar (p),
       limiterDisplay (p.getLimiterEngine().getMeterData()),
       levelMeter (p.getLimiterEngine().getMeterData()),
@@ -53,6 +55,18 @@ AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
         p.getLimiterEngine().getMeterData().resetLoudness();
     };
 
+    // Listen for display parameter changes
+    auto& apvts = p.getAPVTS();
+    apvts.addParameterListener (ParamIDs::kDisplayMode, this);
+    apvts.addParameterListener (ParamIDs::kMeterScale, this);
+    apvts.addParameterListener (ParamIDs::kLoudnessTarget, this);
+
+    // Apply initial values
+    limiterDisplay.setDisplayMode ((int) *apvts.getRawParameterValue (ParamIDs::kDisplayMode));
+    limiterDisplay.setMeterScale ((int) *apvts.getRawParameterValue (ParamIDs::kMeterScale));
+    levelMeter.setMeterScale ((int) *apvts.getRawParameterValue (ParamIDs::kMeterScale));
+    loudnessPanel.setLoudnessTarget ((int) *apvts.getRawParameterValue (ParamIDs::kLoudnessTarget));
+
     setSize (Constants::kDefaultEditorWidth, Constants::kDefaultEditorHeight);
     setResizable (true, true);
     setResizeLimits (860, 495, 1800, 1350);
@@ -60,7 +74,25 @@ AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
 
 AdvancedLimiterEditor::~AdvancedLimiterEditor()
 {
+    auto& apvts = processorRef.getAPVTS();
+    apvts.removeParameterListener (ParamIDs::kDisplayMode, this);
+    apvts.removeParameterListener (ParamIDs::kMeterScale, this);
+    apvts.removeParameterListener (ParamIDs::kLoudnessTarget, this);
     setLookAndFeel (nullptr);
+}
+
+void AdvancedLimiterEditor::parameterChanged (const juce::String& parameterID, float newValue)
+{
+    int val = (int) newValue;
+    if (parameterID == ParamIDs::kDisplayMode)
+        limiterDisplay.setDisplayMode (val);
+    else if (parameterID == ParamIDs::kMeterScale)
+    {
+        limiterDisplay.setMeterScale (val);
+        levelMeter.setMeterScale (val);
+    }
+    else if (parameterID == ParamIDs::kLoudnessTarget)
+        loudnessPanel.setLoudnessTarget (val);
 }
 
 void AdvancedLimiterEditor::paint (juce::Graphics& g)

@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <deque>
+#include <cstdint>
 
 class TransientStage
 {
@@ -42,8 +43,8 @@ private:
     struct DequeEntry
     {
         float grDB;
-        int position;
+        int64_t position;
     };
     std::deque<DequeEntry> minDeque;
-    int sampleCounter = 0;
+    int64_t sampleCounter = 0;
 };

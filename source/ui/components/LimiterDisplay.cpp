@@ -31,14 +31,14 @@ void LimiterDisplay::timerCallback()
     if (displayMode == 4) // Off
         return;
 
-    auto& buffer = meterData.getBuffer();
-    if (buffer.swapRead())
+    // LimiterDisplay is the sole TripleBuffer consumer; other components read the cached frame
+    if (meterData.swapAndCache())
     {
-        const auto* frame = buffer.getReadPointer();
+        const auto& frame = meterData.getLatestFrame();
         ScrollingHistoryPoint pt;
-        pt.inputLevel = std::max (frame->inputL, frame->inputR);
-        pt.outputLevel = std::max (frame->outputL, frame->outputR);
-        pt.gainReduction = std::min (frame->grL, frame->grR);
+        pt.inputLevel = std::max (frame.inputL, frame.inputR);
+        pt.outputLevel = std::max (frame.outputL, frame.outputR);
+        pt.gainReduction = std::min (frame.grL, frame.grR);
         history.push (pt);
 
         repaint();

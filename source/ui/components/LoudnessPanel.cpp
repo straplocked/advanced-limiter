@@ -31,15 +31,12 @@ LoudnessPanel::~LoudnessPanel()
 
 void LoudnessPanel::timerCallback()
 {
-    auto& buffer = meterData.getBuffer();
-    if (buffer.swapRead())
-    {
-        const auto* frame = buffer.getReadPointer();
-        momentary = frame->momentaryLUFS;
-        shortTerm = frame->shortTermLUFS;
-        integrated = frame->integratedLUFS;
-        lra = frame->lra;
-    }
+    // Read from the cached frame (LimiterDisplay is the sole TripleBuffer consumer)
+    const auto& frame = meterData.getLatestFrame();
+    momentary = frame.momentaryLUFS;
+    shortTerm = frame.shortTermLUFS;
+    integrated = frame.integratedLUFS;
+    lra = frame.lra;
     repaint();
 }
 

@@ -52,6 +52,7 @@ private:
 
     LimiterParameters cachedParams;
     LevelMeterData meterData;
+    int pendingOversampleFactor = -1;
 
     void applyInputGain (juce::AudioBuffer<float>& buffer);
     void applyOutputCeiling (juce::AudioBuffer<float>& buffer);

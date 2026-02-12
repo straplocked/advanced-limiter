@@ -33,37 +33,37 @@ LevelMeterComponent::~LevelMeterComponent()
 
 void LevelMeterComponent::timerCallback()
 {
-    auto& buffer = meterData.getBuffer();
-    if (buffer.swapRead())
+    // Read from the cached frame (LimiterDisplay is the sole TripleBuffer consumer)
+    const auto& frame = meterData.getLatestFrame();
+
+    // Smooth with 0.8 decay
+    constexpr float decay = 0.8f;
+    constexpr float attack = 0.4f;
+
+    auto smooth = [] (float& current, float target, float atk, float dec)
     {
-        const auto* frame = buffer.getReadPointer();
+        float coeff = (target > current) ? atk : dec;
+        current = current + coeff * (target - current);
+    };
 
-        // Smooth with 0.8 decay
-        constexpr float decay = 0.8f;
-        constexpr float attack = 0.4f;
+    smooth (smoothInputL, frame.inputL, attack, decay);
+    smooth (smoothInputR, frame.inputR, attack, decay);
+    smooth (smoothOutputL, frame.outputL, attack, decay);
+    smooth (smoothOutputR, frame.outputR, attack, decay);
 
-        auto smooth = [] (float& current, float target, float atk, float dec)
-        {
-            float coeff = (target > current) ? atk : dec;
-            current = current + coeff * (target - current);
-        };
+    float gr = std::min (frame.grL, frame.grR);
+    smooth (smoothGR, gr, attack, decay);
 
-        smooth (smoothInputL, frame->inputL, attack, decay);
-        smooth (smoothInputR, frame->inputR, attack, decay);
-        smooth (smoothOutputL, frame->outputL, attack, decay);
-        smooth (smoothOutputR, frame->outputR, attack, decay);
+    truePeakL = frame.truePeakL;
+    truePeakR = frame.truePeakR;
 
-        float gr = std::min (frame->grL, frame->grR);
-        smooth (smoothGR, gr, attack, decay);
+    // Feed peak hold calculators
+    peakHoldInputL.process (smoothInputL);
+    peakHoldInputR.process (smoothInputR);
+    peakHoldOutputL.process (smoothOutputL);
+    peakHoldOutputR.process (smoothOutputR);
 
-        // Feed peak hold calculators
-        peakHoldInputL.process (smoothInputL);
-        peakHoldInputR.process (smoothInputR);
-        peakHoldOutputL.process (smoothOutputL);
-        peakHoldOutputR.process (smoothOutputR);
-
-        repaint();
-    }
+    repaint();
 }
 
 void LevelMeterComponent::setMeterScale (int scale) { meterScale = scale; }
@@ -126,6 +126,10 @@ void LevelMeterComponent::paint (juce::Graphics& g)
     auto outRArea = juce::Rectangle<float> (x, y, barW, h);
     drawMeterBar (g, outRArea, smoothOutputR, peakHoldOutputR.process (smoothOutputR), false);
     x += barW + gap;
+
+    // True peak markers on output bars
+    drawTruePeakMarker (g, outLArea, truePeakL);
+    drawTruePeakMarker (g, outRArea, truePeakR);
 
     // GR bar (inverted)
     auto grArea = juce::Rectangle<float> (x, y, barW, h);

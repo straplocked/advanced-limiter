@@ -24,7 +24,8 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_opengl/juce_opengl.h>
 
-class AdvancedLimiterEditor : public juce::AudioProcessorEditor
+class AdvancedLimiterEditor : public juce::AudioProcessorEditor,
+                              public juce::AudioProcessorValueTreeState::Listener
 {
 public:
     explicit AdvancedLimiterEditor (AdvancedLimiterProcessor&);
@@ -32,8 +33,10 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    void parameterChanged (const juce::String& parameterID, float newValue) override;
 
 private:
+    AdvancedLimiterProcessor& processorRef;
     AdvancedLimiterLookAndFeel lookAndFeel;
 
     HeaderToolbar headerToolbar;

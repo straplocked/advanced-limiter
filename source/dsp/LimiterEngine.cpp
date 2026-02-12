@@ -24,10 +24,11 @@ void LimiterEngine::prepare (double sampleRate, int maxBlockSize, int numChannel
     currentBlockSize = maxBlockSize;
 
     // Prepare sub-components
-    limiterCore.prepare (sampleRate, maxBlockSize);
-    dcFilter.prepare (sampleRate);
     oversampler.prepare (sampleRate, maxBlockSize, numChannels);
-    truePeakLimiter.prepare (sampleRate);
+    // Prepare limiter core at the oversampled rate so timing parameters are correct
+    limiterCore.prepare (oversampler.getUpsampledRate(), maxBlockSize * oversampler.getFactor());
+    dcFilter.prepare (sampleRate);
+    truePeakLimiter.prepare (oversampler.getUpsampledRate());
     dithering.prepare (sampleRate);
 
     // Allocate dry buffer for delta mode
@@ -58,10 +59,11 @@ void LimiterEngine::reset()
 
 void LimiterEngine::updateParameters (const LimiterParameters& params)
 {
-    cachedParams = params;
+    // Handle oversampling factor changes safely (avoid heap alloc on audio thread)
+    if (params.oversample != cachedParams.oversample)
+        pendingOversampleFactor = params.oversample;
 
-    // Update oversampler factor
-    oversampler.setFactor (params.oversample);
+    cachedParams = params;
 
     // Update limiter core
     limiterCore.updateParameters (
@@ -88,6 +90,26 @@ void LimiterEngine::process (juce::AudioBuffer<float>& buffer)
 
     int numChannels = buffer.getNumChannels();
     int numSamples = buffer.getNumSamples();
+
+    // Handle pending oversampling factor change (safe: between blocks)
+    if (pendingOversampleFactor >= 0)
+    {
+        oversampler.setFactor (pendingOversampleFactor);
+        // Re-prepare core at the oversampled rate
+        limiterCore.prepare (oversampler.getUpsampledRate(), currentBlockSize * oversampler.getFactor());
+        if (cachedParams.truePeak)
+            truePeakLimiter.prepare (oversampler.getUpsampledRate());
+        pendingOversampleFactor = -1;
+    }
+
+    // Bypass: pass audio through unmodified
+    if (cachedParams.bypass)
+    {
+        meterData.pushInputLevel (buffer);
+        meterData.pushGainReduction (0.0f, 0.0f);
+        meterData.pushOutputLevel (buffer);
+        return;
+    }
 
     // Step 1: Apply input gain (smoothed, per-sample)
     applyInputGain (buffer);
@@ -155,11 +177,19 @@ void LimiterEngine::process (juce::AudioBuffer<float>& buffer)
     // Step 11: Apply output ceiling (hard clip at ceiling level)
     applyOutputCeiling (buffer);
 
-    // Step 12: Capture output levels for metering
+    // Step 12: Feed true peak meter with output samples
+    for (int ch = 0; ch < std::min (numChannels, 2); ++ch)
+    {
+        const float* data = buffer.getReadPointer (ch);
+        for (int i = 0; i < numSamples; ++i)
+            meterData.pushTruePeakSample (data[i], ch);
+    }
+
+    // Step 13: Capture output levels and GR for metering
     meterData.pushGainReduction (grL, grR);
     meterData.pushOutputLevel (buffer);
 
-    // Step 13: Delta mode: output = dry - wet
+    // Step 14: Delta mode: output = dry - wet
     if (cachedParams.delta)
     {
         for (int ch = 0; ch < numChannels; ++ch)
@@ -171,7 +201,7 @@ void LimiterEngine::process (juce::AudioBuffer<float>& buffer)
         }
     }
 
-    // Step 14: Unity gain compensation: multiply by inverse of input gain
+    // Step 15: Unity gain compensation: multiply by inverse of input gain
     if (cachedParams.unityGain && std::abs (cachedParams.inputGain) > 0.01f)
     {
         float compensationGain = MathUtils::dbToGain (-cachedParams.inputGain);
