@@ -1,7 +1,7 @@
 # Advanced Limiter
 
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
-[![CI](https://github.com/straplocked/advanced-limiter/actions/workflows/ci.yml/badge.svg)](https://github.com/straplocked/advanced-limiter/actions/workflows/ci.yml)
+[![Build](https://github.com/straplocked/advanced-limiter/actions/workflows/build.yml/badge.svg)](https://github.com/straplocked/advanced-limiter/actions/workflows/build.yml)
 
 A professional brickwall lookahead limiter audio plugin built with [JUCE 7](https://juce.com/). Features 8 limiter styles, true peak detection, stereo channel linking, dithering with noise shaping, oversampling up to 32x, integrated loudness metering (EBU R128), undo/redo, A/B comparison, delta listen mode, MIDI learn, and a real-time scrolling waveform display.
 
