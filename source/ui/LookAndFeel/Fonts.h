@@ -11,6 +11,7 @@
 class Fonts
 {
 public:
+    static constexpr float kScale = 1.1f;
     static juce::Typeface::Ptr getSpaceGroteskTypeface()
     {
         static auto typeface = juce::Typeface::createSystemTypefaceFor (
@@ -29,16 +30,16 @@ public:
 
     static juce::Font getBody (float height)
     {
-        return juce::Font (getSpaceGroteskTypeface()).withHeight (height);
+        return juce::Font (getSpaceGroteskTypeface()).withHeight (height * kScale);
     }
 
     static juce::Font getBold (float height)
     {
-        return juce::Font (getSpaceGroteskTypeface()).withHeight (height).boldened();
+        return juce::Font (getSpaceGroteskTypeface()).withHeight (height * kScale).boldened();
     }
 
     static juce::Font getTitle (float height)
     {
-        return juce::Font (getAudiowideTypeface()).withHeight (height);
+        return juce::Font (getAudiowideTypeface()).withHeight (height * kScale);
     }
 };

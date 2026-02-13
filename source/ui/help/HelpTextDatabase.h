@@ -33,7 +33,7 @@ inline juce::String getHelpText (const juce::String& componentID)
         { "header.midiLearn",    "MIDI Learn \xe2\x80\x94 assigns MIDI CC messages to limiter parameters for hardware control." },
 
         // ==================== Bottom Panel ====================
-        { "bottom.inputGain",    "Input Gain \xe2\x80\x94 drives the signal into the limiter (-30 to +30 dB). Higher values push more into limiting." },
+        { "bottom.inputGain",    "Input Gain \xe2\x80\x94 vertical fader that drives the signal into the limiter (-30 to +30 dB). Higher values push more into limiting." },
         { "bottom.outputLevel",  "Output Level / Ceiling \xe2\x80\x94 the maximum output level the limiter will allow (-30 to 0 dB). Set to -0.3 dB for safe mastering or -1.0 dB for streaming." },
         { "bottom.truePeak",     "True Peak \xe2\x80\x94 enables inter-sample peak detection using 4x oversampled metering. Prevents ISP clipping in DACs and lossy codecs." },
         { "bottom.dcFilter",     "DC Filter \xe2\x80\x94 removes sub-sonic DC offset (5 Hz high-pass) that can waste headroom and cause asymmetric clipping." },
@@ -45,9 +45,7 @@ inline juce::String getHelpText (const juce::String& componentID)
         { "bottom.noiseShape",   "Noise Shaping \xe2\x80\x94 reshapes dither noise to be less audible. Off, Basic (first-order), Optimized (psychoacoustic), or Weighted (ear-weighted)." },
         { "bottom.oversample",   "Oversampling \xe2\x80\x94 processes at higher sample rates for more accurate peak detection and reduced aliasing. Higher = more CPU (1x to 32x)." },
         { "bottom.meterScale",   "Meter Scale \xe2\x80\x94 sets the dB range shown on level meters and scrolling display: 16, 32, 48, K-12, K-14, or K-20." },
-        { "bottom.controlsToggle", "Controls \xe2\x80\x94 expands or collapses the detailed control tray with timing, style, and link controls." },
-
-        // ==================== Controls Tray ====================
+        // ==================== Controls (always visible) ====================
         { "controls.lookahead",     "Lookahead \xe2\x80\x94 how far ahead the limiter looks for peaks (0.05 to 5 ms). Longer lookahead = smoother limiting but more latency." },
         { "controls.attack",        "Attack \xe2\x80\x94 how quickly gain reduction engages after a peak is detected (0.01 to 10 ms). Faster = tighter control, slower = more transient punch." },
         { "controls.release",       "Release \xe2\x80\x94 how quickly gain reduction recovers after the signal drops (10 to 1000 ms). Faster = more punch, slower = more transparent." },

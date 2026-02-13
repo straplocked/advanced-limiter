@@ -104,6 +104,75 @@ public:
         (void) slider;
     }
 
+    void drawLinearSlider (juce::Graphics& g, int x, int y, int width, int height,
+                           float sliderPos, float minSliderPos, float maxSliderPos,
+                           const juce::Slider::SliderStyle style, juce::Slider& slider) override
+    {
+        if (style != juce::Slider::LinearVertical)
+        {
+            LookAndFeel_V4::drawLinearSlider (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+            return;
+        }
+
+        auto bounds = juce::Rectangle<float> ((float) x, (float) y, (float) width, (float) height);
+        float cx = bounds.getCentreX();
+
+        // Dark groove
+        float grooveW = 4.0f;
+        auto grooveRect = juce::Rectangle<float> (cx - grooveW * 0.5f, bounds.getY(),
+                                                   grooveW, bounds.getHeight());
+        g.setColour (ColourPalette::knobBackground().darker (0.3f));
+        g.fillRoundedRectangle (grooveRect, 2.0f);
+
+        // Find center position (0 dB = center of range for bipolar, bottom for unipolar)
+        float range = slider.getMaximum() - slider.getMinimum();
+        float zeroNorm = (float) ((0.0 - slider.getMinimum()) / range);
+        float centerY = bounds.getBottom() - zeroNorm * bounds.getHeight();
+
+        // Orange fill from center (0 dB) to current position
+        float fillW = 6.0f;
+        float thumbY = sliderPos;
+
+        if (thumbY < centerY)
+        {
+            auto fillRect = juce::Rectangle<float> (cx - fillW * 0.5f, thumbY,
+                                                     fillW, centerY - thumbY);
+            g.setColour (ColourPalette::knobIndicator());
+            g.fillRoundedRectangle (fillRect, 2.0f);
+        }
+        else if (thumbY > centerY)
+        {
+            auto fillRect = juce::Rectangle<float> (cx - fillW * 0.5f, centerY,
+                                                     fillW, thumbY - centerY);
+            g.setColour (ColourPalette::knobIndicator());
+            g.fillRoundedRectangle (fillRect, 2.0f);
+        }
+
+        // Center line (0 dB reference)
+        g.setColour (ColourPalette::axisText().withAlpha (0.6f));
+        g.drawLine (cx - 8.0f, centerY, cx + 8.0f, centerY, 1.0f);
+
+        // Bright thumb line
+        float thumbH = 3.0f;
+        float thumbW = 14.0f;
+        g.setColour (ColourPalette::textBright());
+        g.fillRoundedRectangle (cx - thumbW * 0.5f, thumbY - thumbH * 0.5f,
+                                thumbW, thumbH, 1.5f);
+
+        // Subtle tick marks at +/- 6, 12, 18, 24 dB
+        g.setColour (ColourPalette::axisText().withAlpha (0.3f));
+        for (float db : { -24.0f, -18.0f, -12.0f, -6.0f, 6.0f, 12.0f, 18.0f, 24.0f })
+        {
+            float norm = (float) ((db - slider.getMinimum()) / range);
+            float tickY = bounds.getBottom() - norm * bounds.getHeight();
+            if (tickY > bounds.getY() && tickY < bounds.getBottom())
+                g.drawLine (cx - 6.0f, tickY, cx + 6.0f, tickY, 0.5f);
+        }
+
+        (void) minSliderPos;
+        (void) maxSliderPos;
+    }
+
     void drawButtonBackground (juce::Graphics& g, juce::Button& button,
                                const juce::Colour&,
                                bool isMouseOverButton, bool isButtonDown) override

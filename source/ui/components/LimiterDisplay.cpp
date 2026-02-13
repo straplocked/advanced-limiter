@@ -71,7 +71,7 @@ void LimiterDisplay::paint (juce::Graphics& g)
                 bounds.getRight() - 1.0f, bounds.getBottom() - 0.5f, 0.5f);
 
     // Draw area with left margin for labels
-    float leftMargin = 36.0f;
+    float leftMargin = 40.0f;
     auto drawArea = bounds.withTrimmedLeft (leftMargin).reduced (1.0f, 1.0f);
 
     drawGrid (g, drawArea);
@@ -111,7 +111,7 @@ void LimiterDisplay::drawGrid (juce::Graphics& g, juce::Rectangle<float> area)
         // Label on left side (in margin)
         g.setColour (ColourPalette::axisText());
         juce::String label = (db == 0.0f) ? "0" : juce::String ((int) db);
-        g.drawText (label, area.getX() - 34.0f, y - 6.0f, 30.0f, 12.0f,
+        g.drawText (label, area.getX() - 38.0f, y - 7.0f, 33.0f, 13.0f,
                     juce::Justification::centredRight);
     }
 
@@ -234,8 +234,8 @@ void LimiterDisplay::drawGRPeakLabels (juce::Graphics& g, juce::Rectangle<float>
     g.setFont (Fonts::getBold (10.0f));
     g.setColour (ColourPalette::grPeakLabel());
 
-    float labelW = 50.0f;
-    float labelH = 14.0f;
+    float labelW = 55.0f;
+    float labelH = 15.0f;
     float labelX = juce::jlimit (area.getX(), area.getRight() - labelW, x - labelW * 0.5f);
     float labelY = y - labelH - 4.0f;
 

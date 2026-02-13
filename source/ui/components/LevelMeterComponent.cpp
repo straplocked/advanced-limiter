@@ -93,7 +93,7 @@ void LevelMeterComponent::paint (juce::Graphics& g)
     g.setColour (ColourPalette::curveArea());
     g.fillRoundedRectangle (bounds, 3.0f);
 
-    float labelHeight = 14.0f;
+    float labelHeight = 15.0f;
     auto meterArea = bounds.reduced (3.0f, 2.0f);
     meterArea.removeFromTop (labelHeight);
     meterArea.removeFromBottom (labelHeight);
@@ -236,7 +236,7 @@ void LevelMeterComponent::drawTruePeakMarker (juce::Graphics& g, juce::Rectangle
     float tpY = dbToY (tpDB, h) + area.getY();
 
     // Small red triangle marker
-    float triSize = 4.0f;
+    float triSize = 4.4f;
     juce::Path tri;
     tri.addTriangle (area.getRight() - triSize, tpY - triSize * 0.5f,
                      area.getRight() - triSize, tpY + triSize * 0.5f,

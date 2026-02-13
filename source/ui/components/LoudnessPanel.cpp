@@ -67,7 +67,7 @@ void LoudnessPanel::paint (juce::Graphics& g)
     g.drawLine (bounds.getX(), bounds.getY(), bounds.getRight(), bounds.getY(), 0.5f);
 
     // Loudness readout
-    float xPos = 10.0f;
+    float xPos = 11.0f;
     float textH = bounds.getHeight();
 
     auto drawLoudnessValue = [&] (const juce::String& label, float value,
@@ -75,8 +75,8 @@ void LoudnessPanel::paint (juce::Graphics& g)
     {
         g.setFont (Fonts::getBody (10.0f));
         g.setColour (labelColour);
-        g.drawText (label, xPos, 0.0f, 20.0f, textH, juce::Justification::centredLeft);
-        xPos += 20.0f;
+        g.drawText (label, xPos, 0.0f, 22.0f, textH, juce::Justification::centredLeft);
+        xPos += 22.0f;
 
         g.setFont (Fonts::getBold (11.0f));
         g.setColour (ColourPalette::textBright());
@@ -87,8 +87,8 @@ void LoudnessPanel::paint (juce::Graphics& g)
         else
             valStr = juce::String (value, 1) + (isLUFS ? "" : " LU");
 
-        g.drawText (valStr, xPos, 0.0f, 50.0f, textH, juce::Justification::centredLeft);
-        xPos += 56.0f;
+        g.drawText (valStr, xPos, 0.0f, 55.0f, textH, juce::Justification::centredLeft);
+        xPos += 62.0f;
     };
 
     drawLoudnessValue ("M:", momentary, ColourPalette::outputLevel(), true);
@@ -98,14 +98,14 @@ void LoudnessPanel::paint (juce::Graphics& g)
     // LRA
     g.setFont (Fonts::getBody (10.0f));
     g.setColour (ColourPalette::axisText());
-    g.drawText ("LRA:", xPos, 0.0f, 30.0f, textH, juce::Justification::centredLeft);
-    xPos += 30.0f;
+    g.drawText ("LRA:", xPos, 0.0f, 33.0f, textH, juce::Justification::centredLeft);
+    xPos += 33.0f;
 
     g.setFont (Fonts::getBold (11.0f));
     g.setColour (ColourPalette::textBright());
     juce::String lraStr = (lra > 0.01f) ? juce::String (lra, 1) : "---";
-    g.drawText (lraStr, xPos, 0.0f, 40.0f, textH, juce::Justification::centredLeft);
-    xPos += 46.0f;
+    g.drawText (lraStr, xPos, 0.0f, 44.0f, textH, juce::Justification::centredLeft);
+    xPos += 51.0f;
 
     // Loudness target indicator
     if (loudnessTarget > 0)
@@ -123,7 +123,7 @@ void LoudnessPanel::paint (juce::Graphics& g)
         g.setColour (ColourPalette::loudnessTarget());
 
         juce::String targetStr = "Target: " + juce::String ((int) targetLUFS) + " LUFS";
-        g.drawText (targetStr, xPos, 0.0f, 110.0f, textH, juce::Justification::centredLeft);
+        g.drawText (targetStr, xPos, 0.0f, 121.0f, textH, juce::Justification::centredLeft);
 
         // Draw small colored indicator showing if we're above/below target
         if (integrated > -99.0f)
@@ -133,7 +133,7 @@ void LoudnessPanel::paint (juce::Graphics& g)
                 ? ColourPalette::meterGreen()
                 : (diff > 0.0f ? ColourPalette::meterRed() : ColourPalette::loudnessTarget());
             g.setColour (indicatorColour);
-            g.fillEllipse (xPos + 112.0f, textH * 0.5f - 3.0f, 6.0f, 6.0f);
+            g.fillEllipse (xPos + 123.0f, textH * 0.5f - 3.3f, 6.6f, 6.6f);
         }
     }
 }
@@ -141,6 +141,6 @@ void LoudnessPanel::paint (juce::Graphics& g)
 void LoudnessPanel::resized()
 {
     auto bounds = getLocalBounds();
-    int btnW = 28;
+    int btnW = 31;
     resetButton.setBounds (bounds.removeFromRight (btnW).reduced (2, 4));
 }

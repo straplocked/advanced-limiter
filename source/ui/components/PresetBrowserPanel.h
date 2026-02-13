@@ -71,7 +71,7 @@ public:
         g.drawRect (getLocalBounds(), 1);
 
         g.setColour (ColourPalette::textBright());
-        g.setFont (15.0f);
+        g.setFont (16.5f);
         g.drawText ("Preset Browser", 10, 6, 200, 20, juce::Justification::centredLeft);
     }
 
@@ -126,12 +126,12 @@ public:
 
         // Name
         g.setColour (ColourPalette::textBright());
-        g.setFont (13.0f);
+        g.setFont (14.3f);
         g.drawText (entry.name, 26, 0, width / 2, height, juce::Justification::centredLeft);
 
         // Category
         g.setColour (ColourPalette::textDim());
-        g.setFont (11.0f);
+        g.setFont (12.1f);
         g.drawText (entry.category, width / 2, 0, width / 4, height, juce::Justification::centredLeft);
 
         // Tags

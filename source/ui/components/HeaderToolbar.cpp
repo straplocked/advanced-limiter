@@ -164,20 +164,20 @@ void HeaderToolbar::paint (juce::Graphics& g)
     // Title with drop shadow
     g.setFont (Fonts::getTitle (17.5f));
     g.setColour (juce::Colour (0x40000000));
-    g.drawText ("ADVANCED LIMITER", 13, 1, 250, getHeight(), juce::Justification::centredLeft, true);
+    g.drawText ("ADVANCED LIMITER", 14, 1, 275, getHeight(), juce::Justification::centredLeft, true);
     g.setColour (ColourPalette::textBright());
-    g.drawText ("ADVANCED LIMITER", 12, 0, 250, getHeight(), juce::Justification::centredLeft, true);
+    g.drawText ("ADVANCED LIMITER", 13, 0, 275, getHeight(), juce::Justification::centredLeft, true);
 }
 
 void HeaderToolbar::resized()
 {
     auto bounds = getLocalBounds().reduced (8, 4);
 
-    int btnH = 22;
-    int iconW = 36;
+    int btnH = 24;
+    int iconW = 40;
 
     // === Left side: title gap, then undo/redo, then A/B ===
-    bounds.removeFromLeft (260); // title space
+    bounds.removeFromLeft (286); // title space
 
     auto undoArea = bounds.removeFromLeft (iconW);
     undoButton.setBounds (undoArea.withHeight (btnH).withCentre (undoArea.getCentre()));
@@ -185,40 +185,40 @@ void HeaderToolbar::resized()
     auto redoArea = bounds.removeFromLeft (iconW);
     redoButton.setBounds (redoArea.withHeight (btnH).withCentre (redoArea.getCentre()));
 
-    bounds.removeFromLeft (6);
+    bounds.removeFromLeft (7);
 
-    auto abArea = bounds.removeFromLeft (22);
+    auto abArea = bounds.removeFromLeft (24);
     abButton.setBounds (abArea.withHeight (btnH).withCentre (abArea.getCentre()));
     bounds.removeFromLeft (2);
 
-    auto copyABArea = bounds.removeFromLeft (30);
+    auto copyABArea = bounds.removeFromLeft (33);
     copyABButton.setBounds (copyABArea.withHeight (btnH).withCentre (copyABArea.getCentre()));
 
-    bounds.removeFromLeft (8);
+    bounds.removeFromLeft (9);
 
     // === Right side: MIDI, Delta ===
-    auto midiArea = bounds.removeFromRight (36);
+    auto midiArea = bounds.removeFromRight (40);
     midiLearnButton.setBounds (midiArea.withHeight (btnH).withCentre (midiArea.getCentre()));
     bounds.removeFromRight (4);
 
-    auto deltaArea = bounds.removeFromRight (40);
+    auto deltaArea = bounds.removeFromRight (44);
     deltaButton.setBounds (deltaArea.withHeight (btnH).withCentre (deltaArea.getCentre()));
     bounds.removeFromRight (4);
 
     // === Center: preset navigation ===
     auto presetBounds = bounds;
     auto presetArea = presetBounds.withSizeKeepingCentre (
-        juce::jmin (260, presetBounds.getWidth()), presetBounds.getHeight());
+        juce::jmin (286, presetBounds.getWidth()), presetBounds.getHeight());
 
-    auto prevBtnArea = presetArea.removeFromLeft (24);
+    auto prevBtnArea = presetArea.removeFromLeft (26);
     prevButton.setBounds (prevBtnArea.withHeight (btnH).withCentre (prevBtnArea.getCentre()));
     presetArea.removeFromLeft (4);
 
-    auto saveBtnArea = presetArea.removeFromRight (38);
+    auto saveBtnArea = presetArea.removeFromRight (42);
     saveButton.setBounds (saveBtnArea.withHeight (btnH).withCentre (saveBtnArea.getCentre()));
     presetArea.removeFromRight (4);
 
-    auto nextBtnArea = presetArea.removeFromRight (24);
+    auto nextBtnArea = presetArea.removeFromRight (26);
     nextButton.setBounds (nextBtnArea.withHeight (btnH).withCentre (nextBtnArea.getCentre()));
     presetArea.removeFromRight (4);
 

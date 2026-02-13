@@ -13,9 +13,16 @@
 
 namespace Constants
 {
-    constexpr int kDefaultEditorWidth = 960;
-    constexpr int kDefaultEditorHeight = 660;
+    constexpr int kDefaultEditorWidth = 1056;
+    constexpr int kDefaultEditorHeight = 726;
     constexpr int kUITimerHz = 30;
+
+    // Layout constants (1.1x scaled)
+    constexpr int kHeaderHeight = 40;
+    constexpr int kBottomStripHeight = 154;
+    constexpr int kInputGainStripWidth = 50;
+    constexpr int kMeterWidth = 110;
+    constexpr int kLoudnessPanelHeight = 33;
 
     // Limiter parameter ranges
     constexpr float kMinInputGain = -30.0f;

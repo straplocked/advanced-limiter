@@ -106,7 +106,7 @@ void HelpOverlay::drawHelpTooltip (juce::Graphics& g, const juce::String& text,
     const float padding = 8.0f;
     const float vertPadding = 5.0f;
 
-    g.setFont (12.0f);
+    g.setFont (13.2f);
 
     juce::AttributedString attrText;
     attrText.append (text, Fonts::getBody (12.0f), ColourPalette::textBright());

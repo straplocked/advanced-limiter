@@ -25,32 +25,38 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
 
-    std::function<void()> onControlsToggle;
-    void setControlTrayOpen (bool open);
-
 private:
-    juce::Slider inputGainKnob, outputLevelKnob;
-    juce::Label inputGainLabel, outputLevelLabel;
-    juce::Label inputGainValue, outputLevelValue;
+    // Row 1: Style combo, 5 knobs, Display combo
+    juce::Slider lookaheadKnob, attackKnob, releaseKnob, transientLinkKnob, releaseLinkKnob;
+    juce::Label lookaheadLabel, attackLabel, releaseLabel, transientLinkLabel, releaseLinkLabel;
+    juce::Label lookaheadValue, attackValue, releaseValue, transientLinkValue, releaseLinkValue;
 
+    juce::ComboBox styleCombo, displayModeCombo;
+    juce::Label styleLabel, displayLabel;
+
+    // Row 2: Toggle buttons
     juce::TextButton truePeakButton { "TP" };
     juce::TextButton dcFilterButton { "DC" };
     juce::TextButton unityGainButton { "UG" };
     juce::TextButton auditionButton { "Aud" };
     juce::TextButton scExternalButton { "SC" };
-    juce::TextButton controlsToggle { "CONTROLS" };
+
+    // Row 3: Dither, combos, output level
+    juce::Slider outputLevelKnob;
+    juce::Label outputLevelLabel;
+    juce::Label outputLevelValue;
 
     juce::ComboBox ditherBitsCombo, noiseShapeCombo, oversampleCombo, meterScaleCombo;
     juce::TextButton ditherOnButton { "Dither" };
-
     juce::Label ditherBitsLabel, noiseShapeLabel, oversampleLabel, meterScaleLabel;
 
     // APVTS attachments
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> inputGainAtt, outputLevelAtt;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> tpAtt, dcAtt, ugAtt, audAtt, scAtt, ditherAtt;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> ditherBitsAtt, noiseShapeAtt, oversampleAtt, meterScaleAtt;
-
-    bool controlTrayOpen = false;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>
+        outputLevelAtt, lookaheadAtt, attackAtt, releaseAtt, transLinkAtt, relLinkAtt;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
+        tpAtt, dcAtt, ugAtt, audAtt, scAtt, ditherAtt;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>
+        styleAtt, displayAtt, ditherBitsAtt, noiseShapeAtt, oversampleAtt, meterScaleAtt;
 
     void setupKnob (juce::Slider& knob, juce::Label& label, juce::Label& value, const juce::String& text);
     void setupToggleButton (juce::TextButton& button, const juce::String& id);

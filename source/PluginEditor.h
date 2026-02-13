@@ -15,7 +15,7 @@
 #include "ui/components/LimiterDisplay.h"
 #include "ui/components/LevelMeterComponent.h"
 #include "ui/components/LoudnessPanel.h"
-#include "ui/components/ControlTray.h"
+#include "ui/components/InputGainStrip.h"
 #include "ui/components/BottomControlStrip.h"
 #include "ui/components/HeaderToolbar.h"
 #include "ui/components/PresetBrowserPanel.h"
@@ -43,15 +43,10 @@ private:
     LimiterDisplay limiterDisplay;
     LevelMeterComponent levelMeter;
     LoudnessPanel loudnessPanel;
-    ControlTray controlTray;
+    InputGainStrip inputGainStrip;
     BottomControlStrip controlStrip;
     PresetBrowserPanel presetBrowser;
     HelpOverlay helpOverlay;
-
-    bool controlTrayOpen = false;
-    juce::ComponentAnimator animator;
-
-    void toggleControlTray();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AdvancedLimiterEditor)
 };

@@ -21,7 +21,7 @@ AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
       limiterDisplay (p.getLimiterEngine().getMeterData()),
       levelMeter (p.getLimiterEngine().getMeterData()),
       loudnessPanel (p.getLimiterEngine().getMeterData()),
-      controlTray (p.getAPVTS()),
+      inputGainStrip (p.getAPVTS()),
       controlStrip (p.getAPVTS()),
       presetBrowser (p.getPresetManager())
 {
@@ -31,10 +31,8 @@ AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
     addAndMakeVisible (limiterDisplay);
     addAndMakeVisible (levelMeter);
     addAndMakeVisible (loudnessPanel);
+    addAndMakeVisible (inputGainStrip);
     addAndMakeVisible (controlStrip);
-
-    // Control tray: hidden initially
-    addChildComponent (controlTray);
 
     // Preset browser: hidden initially
     addChildComponent (presetBrowser);
@@ -43,8 +41,6 @@ AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
     addAndMakeVisible (helpOverlay);
 
     // Wire up callbacks
-    controlStrip.onControlsToggle = [this] { toggleControlTray(); };
-
     headerToolbar.onPresetNameClicked = [this]
     {
         presetBrowser.setVisible (! presetBrowser.isVisible());
@@ -69,7 +65,7 @@ AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
 
     setSize (Constants::kDefaultEditorWidth, Constants::kDefaultEditorHeight);
     setResizable (true, true);
-    setResizeLimits (860, 495, 1800, 1350);
+    setResizeLimits (946, 545, 1980, 1485);
 }
 
 AdvancedLimiterEditor::~AdvancedLimiterEditor()
@@ -104,72 +100,33 @@ void AdvancedLimiterEditor::resized()
 {
     auto bounds = getLocalBounds();
 
-    // Top: header toolbar (36 px)
-    headerToolbar.setBounds (bounds.removeFromTop (36));
+    // Top: header toolbar
+    headerToolbar.setBounds (bounds.removeFromTop (Constants::kHeaderHeight));
 
-    // Bottom: control strip (80 px)
-    int controlStripH = 80;
-    controlStrip.setBounds (bounds.removeFromBottom (controlStripH));
+    // Bottom: control strip
+    controlStrip.setBounds (bounds.removeFromBottom (Constants::kBottomStripHeight));
 
-    // If control tray is open, it sits above the control strip
-    int controlTrayH = 140;
-    if (controlTrayOpen)
-    {
-        controlTray.setBounds (bounds.removeFromBottom (controlTrayH));
-    }
-    else
-    {
-        // Position offscreen for animation target
-        controlTray.setBounds (bounds.getX(), bounds.getBottom(),
-                               bounds.getWidth(), controlTrayH);
-    }
+    // Right: level meter
+    levelMeter.setBounds (bounds.removeFromRight (Constants::kMeterWidth));
 
-    // Remaining area: split between display (main) and level meter (right strip)
-    int meterWidth = 100;
-    levelMeter.setBounds (bounds.removeFromRight (meterWidth));
+    // Left: input gain strip
+    inputGainStrip.setBounds (bounds.removeFromLeft (Constants::kInputGainStripWidth));
 
-    // Main display area
+    // Main display area (center)
     limiterDisplay.setBounds (bounds);
 
-    // Loudness panel overlaid at bottom of display area (30 px tall)
+    // Loudness panel overlaid at bottom of display area
     auto displayBounds = limiterDisplay.getBounds();
-    loudnessPanel.setBounds (displayBounds.getX(), displayBounds.getBottom() - 30,
-                              displayBounds.getWidth(), 30);
+    loudnessPanel.setBounds (displayBounds.getX(),
+                              displayBounds.getBottom() - Constants::kLoudnessPanelHeight,
+                              displayBounds.getWidth(), Constants::kLoudnessPanelHeight);
 
     // Preset browser overlaid on right side of display
-    presetBrowser.setBounds (displayBounds.getRight() - 350,
+    presetBrowser.setBounds (displayBounds.getRight() - 385,
                               displayBounds.getY(),
-                              350, displayBounds.getHeight());
+                              385, displayBounds.getHeight());
 
     // Help overlay covers everything
     helpOverlay.setBounds (getLocalBounds());
     helpOverlay.toFront (false);
-}
-
-void AdvancedLimiterEditor::toggleControlTray()
-{
-    controlTrayOpen = ! controlTrayOpen;
-    controlStrip.setControlTrayOpen (controlTrayOpen);
-
-    if (controlTrayOpen)
-    {
-        controlTray.setVisible (true);
-
-        // Animate into position
-        auto targetBounds = controlTray.getBounds();
-        auto bounds = getLocalBounds();
-        int controlStripH = 80;
-        int controlTrayH = 140;
-
-        // Calculate final position
-        int trayY = bounds.getHeight() - 36 - controlStripH - controlTrayH;
-        // Actually, we need to just re-layout
-        resized();
-    }
-    else
-    {
-        // Hide after brief delay
-        controlTray.setVisible (false);
-        resized();
-    }
 }
