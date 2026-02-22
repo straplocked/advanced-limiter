@@ -37,6 +37,7 @@ namespace ParamIDs
     constexpr const char* kMeterScale    = "meter_scale";
     constexpr const char* kLoudnessTarget = "loudness_target";
     constexpr const char* kLoudnessTime  = "loudness_time";
+    constexpr const char* kChannelMode   = "channel_mode";
     constexpr const char* kBypass        = "bypass";
 
     inline juce::StringArray getStyleNames()

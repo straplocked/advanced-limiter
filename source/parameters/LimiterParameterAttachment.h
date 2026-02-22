@@ -38,6 +38,7 @@ struct LimiterParameters
     int   meterScale     = 1;      // 32 dB
     int   loudnessTarget = 0;      // Off
     int   loudnessTime   = 0;      // Momentary
+    bool  channelMode    = false;   // false = L/R, true = M/S
     bool  bypass         = false;
 };
 
@@ -70,6 +71,7 @@ public:
         rawMeterScale     = apvts.getRawParameterValue (ParamIDs::kMeterScale);
         rawLoudnessTarget = apvts.getRawParameterValue (ParamIDs::kLoudnessTarget);
         rawLoudnessTime   = apvts.getRawParameterValue (ParamIDs::kLoudnessTime);
+        rawChannelMode    = apvts.getRawParameterValue (ParamIDs::kChannelMode);
         rawBypass         = apvts.getRawParameterValue (ParamIDs::kBypass);
     }
 
@@ -98,6 +100,7 @@ public:
         p.meterScale     = (int) rawMeterScale->load();
         p.loudnessTarget = (int) rawLoudnessTarget->load();
         p.loudnessTime   = (int) rawLoudnessTime->load();
+        p.channelMode    = rawChannelMode->load() >= 0.5f;
         p.bypass         = rawBypass->load() >= 0.5f;
         return p;
     }
@@ -125,5 +128,6 @@ private:
     std::atomic<float>* rawMeterScale     = nullptr;
     std::atomic<float>* rawLoudnessTarget = nullptr;
     std::atomic<float>* rawLoudnessTime   = nullptr;
+    std::atomic<float>* rawChannelMode    = nullptr;
     std::atomic<float>* rawBypass         = nullptr;
 };

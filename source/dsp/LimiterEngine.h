@@ -56,4 +56,6 @@ private:
 
     void applyInputGain (juce::AudioBuffer<float>& buffer);
     void applyOutputCeiling (juce::AudioBuffer<float>& buffer);
+    void encodeMidSide (juce::AudioBuffer<float>& buffer);
+    void decodeMidSide (juce::AudioBuffer<float>& buffer);
 };

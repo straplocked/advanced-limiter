@@ -40,6 +40,7 @@ private:
     juce::TextButton unityGainButton { "UG" };
     juce::TextButton auditionButton { "Aud" };
     juce::TextButton scExternalButton { "SC" };
+    juce::TextButton midSideButton { "M/S" };
 
     // Row 3: Dither, combos, output level
     juce::Slider outputLevelKnob;
@@ -54,7 +55,7 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>
         outputLevelAtt, lookaheadAtt, attackAtt, releaseAtt, transLinkAtt, relLinkAtt;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
-        tpAtt, dcAtt, ugAtt, audAtt, scAtt, ditherAtt;
+        tpAtt, dcAtt, ugAtt, audAtt, scAtt, msAtt, ditherAtt;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>
         styleAtt, displayAtt, ditherBitsAtt, noiseShapeAtt, oversampleAtt, meterScaleAtt;
 

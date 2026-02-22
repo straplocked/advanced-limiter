@@ -124,6 +124,10 @@ void LimiterEngine::process (juce::AudioBuffer<float>& buffer)
             dryBuffer.copyFrom (ch, 0, buffer, ch, 0, numSamples);
     }
 
+    // Step 3b: Encode to Mid/Side if enabled
+    if (cachedParams.channelMode)
+        encodeMidSide (buffer);
+
     // Step 4: DC filter if enabled
     if (cachedParams.dcFilter)
     {
@@ -173,6 +177,10 @@ void LimiterEngine::process (juce::AudioBuffer<float>& buffer)
                 data[i] = dithering.processSample (data[i], ch);
         }
     }
+
+    // Step 10b: Decode from Mid/Side back to L/R
+    if (cachedParams.channelMode)
+        decodeMidSide (buffer);
 
     // Step 11: Apply output ceiling (hard clip at ceiling level)
     applyOutputCeiling (buffer);
@@ -240,6 +248,44 @@ void LimiterEngine::applyOutputCeiling (juce::AudioBuffer<float>& buffer)
         float* data = buffer.getWritePointer (ch);
         for (int i = 0; i < numSamples; ++i)
             data[i] = std::clamp (data[i], -ceilingLinear, ceilingLinear);
+    }
+}
+
+void LimiterEngine::encodeMidSide (juce::AudioBuffer<float>& buffer)
+{
+    if (buffer.getNumChannels() < 2)
+        return;
+
+    constexpr float kScale = 0.7071067811865476f;  // 1 / sqrt(2)
+    float* left  = buffer.getWritePointer (0);
+    float* right = buffer.getWritePointer (1);
+    int numSamples = buffer.getNumSamples();
+
+    for (int i = 0; i < numSamples; ++i)
+    {
+        float l = left[i];
+        float r = right[i];
+        left[i]  = (l + r) * kScale;   // Mid
+        right[i] = (l - r) * kScale;   // Side
+    }
+}
+
+void LimiterEngine::decodeMidSide (juce::AudioBuffer<float>& buffer)
+{
+    if (buffer.getNumChannels() < 2)
+        return;
+
+    constexpr float kScale = 0.7071067811865476f;  // 1 / sqrt(2)
+    float* mid  = buffer.getWritePointer (0);
+    float* side = buffer.getWritePointer (1);
+    int numSamples = buffer.getNumSamples();
+
+    for (int i = 0; i < numSamples; ++i)
+    {
+        float m = mid[i];
+        float s = side[i];
+        mid[i]  = (m + s) * kScale;    // Left
+        side[i] = (m - s) * kScale;    // Right
     }
 }
 

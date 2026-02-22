@@ -61,6 +61,7 @@ BottomControlStrip::BottomControlStrip (juce::AudioProcessorValueTreeState& apvt
     setupToggleButton (unityGainButton, "bottom.unityGain");
     setupToggleButton (auditionButton, "bottom.audition");
     setupToggleButton (scExternalButton, "bottom.scExternal");
+    setupToggleButton (midSideButton, "bottom.midSide");
 
     // === Row 3: Output Level knob, Dither controls, combos ===
     setupKnob (outputLevelKnob, outputLevelLabel, outputLevelValue, "Output");
@@ -91,6 +92,7 @@ BottomControlStrip::BottomControlStrip (juce::AudioProcessorValueTreeState& apvt
     ugAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (apvts, ParamIDs::kUnityGain, unityGainButton);
     audAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (apvts, ParamIDs::kAudition, auditionButton);
     scAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (apvts, ParamIDs::kSCExternal, scExternalButton);
+    msAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (apvts, ParamIDs::kChannelMode, midSideButton);
     ditherAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (apvts, ParamIDs::kDitherOn, ditherOnButton);
 
     ditherBitsAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (apvts, ParamIDs::kDitherBits, ditherBitsCombo);
@@ -107,7 +109,7 @@ BottomControlStrip::~BottomControlStrip()
     lookaheadAtt.reset(); attackAtt.reset(); releaseAtt.reset();
     transLinkAtt.reset(); relLinkAtt.reset();
     styleAtt.reset(); displayAtt.reset();
-    tpAtt.reset(); dcAtt.reset(); ugAtt.reset(); audAtt.reset(); scAtt.reset(); ditherAtt.reset();
+    tpAtt.reset(); dcAtt.reset(); ugAtt.reset(); audAtt.reset(); scAtt.reset(); msAtt.reset(); ditherAtt.reset();
     ditherBitsAtt.reset(); noiseShapeAtt.reset(); oversampleAtt.reset(); meterScaleAtt.reset();
 }
 
@@ -270,6 +272,8 @@ void BottomControlStrip::resized()
             auditionButton.setBounds (btnArea.removeFromLeft (btnW));
             btnArea.removeFromLeft (gap);
             scExternalButton.setBounds (btnArea.removeFromLeft (btnW));
+            btnArea.removeFromLeft (gap);
+            midSideButton.setBounds (btnArea.removeFromLeft (btnW));
         }
 
         // === Right side: Dither | Bits | Shape | OS | Meter ===

@@ -40,6 +40,7 @@ inline juce::String getHelpText (const juce::String& componentID)
         { "bottom.unityGain",    "Unity Gain \xe2\x80\x94 automatically compensates output level to match the input RMS. Useful for A/B comparison without loudness bias." },
         { "bottom.audition",     "Audition \xe2\x80\x94 monitors only the limited/clipped portion of the signal. Hear exactly what is being removed." },
         { "bottom.scExternal",   "Sidechain External \xe2\x80\x94 uses an external sidechain input for the limiter detection circuit instead of the main signal." },
+        { "bottom.midSide",      "Mid/Side \xe2\x80\x94 encodes stereo to mid/side before limiting, then decodes back. Limits center and sides independently for wider stereo control." },
         { "bottom.dither",       "Dither \xe2\x80\x94 adds low-level noise to reduce quantization distortion when reducing bit depth." },
         { "bottom.ditherBits",   "Dither Target Bits \xe2\x80\x94 the bit depth to dither down to (16, 18, 20, 22, or 24 bit)." },
         { "bottom.noiseShape",   "Noise Shaping \xe2\x80\x94 reshapes dither noise to be less audible. Off, Basic (first-order), Optimized (psychoacoustic), or Weighted (ear-weighted)." },

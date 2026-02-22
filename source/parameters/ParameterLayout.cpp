@@ -165,6 +165,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout createLayout()
         ParamIDs::getLoudnessTimeNames(),
         0));  // default Momentary
 
+    // ---- Channel Mode ----
+
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { ParamIDs::kChannelMode, 1 },
+        "Mid/Side",
+        false));
+
     // ---- Global ----
 
     layout.add (std::make_unique<juce::AudioParameterBool> (
