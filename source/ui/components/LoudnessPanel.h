@@ -40,6 +40,9 @@ private:
     float shortTerm = -100.0f;
     float integrated = -100.0f;
     float lra = 0.0f;
+    float peakGR = 0.0f;
+    float avgGR = 0.0f;
+    int clipCount = 0;
     int loudnessTarget = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LoudnessPanel)

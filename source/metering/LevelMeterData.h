@@ -40,6 +40,11 @@ struct LimiterMeterFrame
     float shortTermLUFS = -100.0f;
     float integratedLUFS = -100.0f;
     float lra = 0.0f;
+
+    // GR statistics
+    float peakGR = 0.0f;       // Most extreme GR seen (dB, <= 0)
+    float avgGR = 0.0f;        // Exponential moving average of GR (dB)
+    int clipCount = 0;          // Number of output samples exceeding ceiling
 };
 
 class LevelMeterData
@@ -54,7 +59,9 @@ public:
     void pushOutputLevel (const juce::AudioBuffer<float>& buffer);
     void pushGainReduction (float grL, float grR);
     void pushTruePeakSample (float sample, int channel);
+    void pushClipSample (float sample, float ceilingLinear);
     void resetLoudness();
+    void resetStatistics();
 
     TripleBuffer<LimiterMeterFrame>& getBuffer() { return meterBuffer; }
 
@@ -83,4 +90,9 @@ private:
     TruePeakMeter truePeakMeter;
 
     double currentSampleRate = 44100.0;
+
+    // GR statistics accumulators
+    float accumulatedPeakGR = 0.0f;
+    float accumulatedAvgGR = 0.0f;
+    int accumulatedClipCount = 0;
 };

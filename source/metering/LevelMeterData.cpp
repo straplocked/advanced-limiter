@@ -29,6 +29,9 @@ void LevelMeterData::prepare (double sampleRate)
 void LevelMeterData::reset()
 {
     currentFrame = LimiterMeterFrame {};
+    accumulatedPeakGR = 0.0f;
+    accumulatedAvgGR = 0.0f;
+    accumulatedClipCount = 0;
 
     loudnessMeter.reset();
     lraMeter.reset();
@@ -83,6 +86,18 @@ void LevelMeterData::pushGainReduction (float grL, float grR)
 {
     currentFrame.grL = grL;
     currentFrame.grR = grR;
+
+    // Track peak GR (most negative = deepest reduction)
+    float blockGR = std::min (grL, grR);
+    accumulatedPeakGR = std::min (accumulatedPeakGR, blockGR);
+
+    // EMA of block GR (alpha ~0.01 gives ~3 second averaging at 30fps block rate)
+    constexpr float kGRAvgAlpha = 0.01f;
+    accumulatedAvgGR = accumulatedAvgGR + kGRAvgAlpha * (blockGR - accumulatedAvgGR);
+
+    // Write accumulated stats into the frame
+    currentFrame.peakGR = accumulatedPeakGR;
+    currentFrame.avgGR = accumulatedAvgGR;
 }
 
 void LevelMeterData::pushTruePeakSample (float sample, int channel)
@@ -97,6 +112,21 @@ void LevelMeterData::resetLoudness()
 {
     loudnessMeter.reset();
     lraMeter.reset();
+}
+
+void LevelMeterData::pushClipSample (float sample, float ceilingLinear)
+{
+    if (std::fabs (sample) >= ceilingLinear - 1e-7f)
+        accumulatedClipCount++;
+
+    currentFrame.clipCount = accumulatedClipCount;
+}
+
+void LevelMeterData::resetStatistics()
+{
+    accumulatedPeakGR = 0.0f;
+    accumulatedAvgGR = 0.0f;
+    accumulatedClipCount = 0;
 }
 
 void LevelMeterData::publishFrame()

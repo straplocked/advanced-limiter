@@ -185,6 +185,17 @@ void LimiterEngine::process (juce::AudioBuffer<float>& buffer)
     // Step 11: Apply output ceiling (hard clip at ceiling level)
     applyOutputCeiling (buffer);
 
+    // Step 11b: Detect clipped samples for statistics
+    {
+        float ceilingLinear = MathUtils::dbToGain (cachedParams.outputLevel);
+        for (int ch = 0; ch < std::min (numChannels, 2); ++ch)
+        {
+            const float* data = buffer.getReadPointer (ch);
+            for (int i = 0; i < numSamples; ++i)
+                meterData.pushClipSample (data[i], ceilingLinear);
+        }
+    }
+
     // Step 12: Feed true peak meter with output samples
     for (int ch = 0; ch < std::min (numChannels, 2); ++ch)
     {

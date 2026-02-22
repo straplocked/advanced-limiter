@@ -37,6 +37,9 @@ void LoudnessPanel::timerCallback()
     shortTerm = frame.shortTermLUFS;
     integrated = frame.integratedLUFS;
     lra = frame.lra;
+    peakGR = frame.peakGR;
+    avgGR = frame.avgGR;
+    clipCount = frame.clipCount;
     repaint();
 }
 
@@ -106,6 +109,51 @@ void LoudnessPanel::paint (juce::Graphics& g)
     juce::String lraStr = (lra > 0.01f) ? juce::String (lra, 1) : "---";
     g.drawText (lraStr, xPos, 0.0f, 44.0f, textH, juce::Justification::centredLeft);
     xPos += 51.0f;
+
+    // GR Statistics
+    {
+        // Separator
+        g.setColour (ColourPalette::bevelLight().withAlpha (0.3f));
+        g.drawLine (xPos + 2.0f, 6.0f, xPos + 2.0f, textH - 6.0f, 0.5f);
+        xPos += 8.0f;
+
+        // "GR:" label
+        g.setFont (Fonts::getBody (10.0f));
+        g.setColour (ColourPalette::gainReduction());
+        g.drawText ("GR:", xPos, 0.0f, 24.0f, textH, juce::Justification::centredLeft);
+        xPos += 24.0f;
+
+        // Average GR value
+        g.setFont (Fonts::getBold (11.0f));
+        g.setColour (ColourPalette::textBright());
+        juce::String avgStr = (avgGR < -0.05f)
+            ? juce::String (avgGR, 1)
+            : "0.0";
+        g.drawText (avgStr, xPos, 0.0f, 38.0f, textH, juce::Justification::centredLeft);
+        xPos += 38.0f;
+
+        // "pk" label
+        g.setFont (Fonts::getBody (9.0f));
+        g.setColour (ColourPalette::grPeakLabel());
+        g.drawText ("pk", xPos, 0.0f, 16.0f, textH, juce::Justification::centredLeft);
+        xPos += 16.0f;
+
+        // Peak GR value
+        g.setFont (Fonts::getBold (11.0f));
+        g.setColour (ColourPalette::textBright());
+        juce::String pkStr = (peakGR < -0.05f)
+            ? juce::String (peakGR, 1)
+            : "0.0";
+        g.drawText (pkStr, xPos, 0.0f, 38.0f, textH, juce::Justification::centredLeft);
+        xPos += 42.0f;
+
+        // Clip counter
+        g.setFont (Fonts::getBody (10.0f));
+        g.setColour (clipCount > 0 ? ColourPalette::meterRed() : ColourPalette::axisText());
+        juce::String clipStr = "Clip:" + juce::String (clipCount);
+        g.drawText (clipStr, xPos, 0.0f, 60.0f, textH, juce::Justification::centredLeft);
+        xPos += 60.0f;
+    }
 
     // Loudness target indicator
     if (loudnessTarget > 0)

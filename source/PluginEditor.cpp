@@ -49,6 +49,7 @@ AdvancedLimiterEditor::AdvancedLimiterEditor (AdvancedLimiterProcessor& p)
     loudnessPanel.onResetClicked = [&p]
     {
         p.getLimiterEngine().getMeterData().resetLoudness();
+        p.getLimiterEngine().getMeterData().resetStatistics();
     };
 
     // Listen for display parameter changes
