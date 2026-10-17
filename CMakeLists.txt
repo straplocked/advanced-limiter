@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
+# Deployment target must be set before project() to propagate to all sub-builds
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum macOS version")
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Build universal binary")
+endif()
 
 set(ADVANCED_LIMITER_VERSION_MAJOR 0)
 set(ADVANCED_LIMITER_VERSION_MINOR 1)
